@@ -1,1 +1,1 @@
-from .inference import InferenceModule, TTSInference
+from .infer_tool import InferenceModule, TTSInference

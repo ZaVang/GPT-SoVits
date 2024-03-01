@@ -13,3 +13,4 @@ TEMP
 *.ipynb
 input_audio
 output_audio
+.history
