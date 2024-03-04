@@ -4,7 +4,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import gradio as gr
 import argparse
 from functools import partial
-from modelhandler import ModelHandler
+from server.modelhandler import ModelHandler
 from src.inference import TTSInference
 from src.utils.cut import CUT_DICT
 
@@ -273,6 +273,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     ui = webui()
-    # ui.queue(concurrency_count=2, max_size=10)
+    # ui.queue(concurrency_limit=2, max_size=10)
     ui.launch(share=args.share)
 

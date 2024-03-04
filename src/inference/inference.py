@@ -15,7 +15,8 @@ def generate_audio(sovits_weights,
                    prompt_language, 
                    text, 
                    text_language,
-                   how_to_cut=None
+                   how_to_cut=None,
+                   save=True
                    ):
     tts = TTSInference(sovits_weights=sovits_weights, gpt_weights=gpt_weights)
     
@@ -31,10 +32,14 @@ def generate_audio(sovits_weights,
     audio_generator = tts.infer(**infer_dict)
     
     sr, audio = next(audio_generator)
-    ref_wav_name = ''.join(os.path.basename(ref_wav_path).split('.')[:-1])
-    output_path = os.path.join(output_folder, f"{ref_wav_name}_{text[:6]}.wav")
-    sf.write(output_path, audio, sr)
-    print(f"Audio saved to {output_path}")
+    
+    if save:
+        ref_wav_name = ''.join(os.path.basename(ref_wav_path).split('.')[:-1])
+        output_path = os.path.join(output_folder, f"{ref_wav_name}_{text[:6]}.wav")
+        sf.write(output_path, audio, sr)
+        print(f"Audio saved to {output_path}")
+    else:
+        return sr, audio
     
 
 def process_batch(sovits_weights, gpt_weights, input_folder, output_folder, parameters_file):

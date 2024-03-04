@@ -14,3 +14,4 @@ TEMP
 input_audio
 output_audio
 .history
+app.log*
