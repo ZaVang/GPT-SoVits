@@ -4,7 +4,7 @@ tensorboard
 librosa
 numba
 pytorch-lightning
-gradio
+gradio==4.19
 gradio_client
 ffmpeg-python
 onnxruntime

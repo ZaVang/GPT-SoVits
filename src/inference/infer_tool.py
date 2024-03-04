@@ -2,8 +2,8 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from typing import Optional
-from abc import abstractmethod
+from typing import Optional, Union
+from abc import abstractmethod, ABC
 from time import time as ttime
 
 from transformers import AutoModelForMaskedLM, AutoTokenizer
@@ -40,7 +40,7 @@ def merge_short_text_in_array(texts, threshold):
     return result
 
 
-class InferenceModule:
+class InferenceModule(ABC):
     def __init__(self, 
                  *,
                  sovits_weights: str=None,
@@ -50,6 +50,8 @@ class InferenceModule:
                  cnhubert_path: str='pretrained_models/chinese-hubert-base',
                  **kwargs,
                  ) -> None:
+        self.sovits_model_path = sovits_weights
+        self.gpt_model_path = gpt_weights
         self.sovits_model = None
         self.gpt_model = None
         self.sovits_config = None
@@ -61,9 +63,11 @@ class InferenceModule:
             self.device = "cuda"
         else:
             self.device = "cpu"
-            
-        self.change_sovits_weights(sovits_weights)
-        self.change_gpt_weights(gpt_weights)
+        
+        if self.sovits_model_path is not None:
+            self.change_sovits_weights(sovits_weights)
+        if self.gpt_model_path is not None:
+            self.change_gpt_weights(gpt_weights)
         
         self.tokenizer = AutoTokenizer.from_pretrained(bert_path)
         self.bert_model = AutoModelForMaskedLM.from_pretrained(bert_path)
@@ -94,7 +98,7 @@ class InferenceModule:
             self.sovits_model = self.sovits_model.half()
         self.sovits_model = self.sovits_model.to(self.device)
         self.sovits_model.eval()
-        
+        print(f'Model changed to: {sovits_weights}')
         
     def change_gpt_weights(self, gpt_weights: str):
         model_dict = torch.load(gpt_weights, map_location="cpu")
@@ -105,6 +109,7 @@ class InferenceModule:
             self.gpt_model = self.gpt_model.half()
         self.gpt_model = self.gpt_model.to(self.device)
         self.gpt_model.eval()
+        print(f'Model changed to: {gpt_weights}') 
         
        
     @abstractmethod
@@ -126,7 +131,7 @@ class TTSInference(InferenceModule):
                          **kwargs)
         
     def infer(self,
-              ref_wav_path: str,
+              ref_wav_path: Union[str, np.ndarray],
               prompt_text: Optional[str],
               prompt_language: SupportedLanguage,
               text: str,
@@ -158,7 +163,10 @@ class TTSInference(InferenceModule):
         )
         
         with torch.no_grad():
-            wav16k, sr = librosa.load(ref_wav_path, sr=16000)
+            if isinstance(ref_wav_path, str):
+                wav16k, _ = librosa.load(ref_wav_path, sr=16000)
+            else:
+                wav16k, _ = ref_wav_path
             if (wav16k.shape[0] > 160000 or wav16k.shape[0] < 48000):
                 raise OSError("参考音频在3~10秒范围外，请更换！")
             wav16k = torch.from_numpy(wav16k)
