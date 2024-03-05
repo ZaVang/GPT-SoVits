@@ -45,3 +45,7 @@ RUN pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1 -
 
 # 将当前目录内容复制到容器的/app下
 COPY . /app
+
+# 在Dockerfile中设置环境变量
+ENV NVIDIA_DRIVER_CAPABILITIES=compute,utility
+
