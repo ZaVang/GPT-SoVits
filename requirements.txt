@@ -24,4 +24,5 @@ jieba_fast
 jieba
 LangSegment>=0.2.0
 Faster_Whisper
+einops
 pydantic

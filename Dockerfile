@@ -19,12 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 创建并初始化conda环境
-RUN conda create -n aispeech python=3.10.8 && \
-    echo "conda activate aispeech" >> ~/.bashrc
-
-SHELL ["conda", "run", "-n", "aispeech", "/bin/bash", "-c"]
-
 # 下载CUDA工具包并安装
 RUN wget -q https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run \
     && sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit > /dev/null \
@@ -34,6 +28,12 @@ RUN wget -q https://developer.download.nvidia.com/compute/cuda/11.8.0/local_inst
 ENV PATH=$PATH:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/nvidia/lib64
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
+
+# 创建并初始化conda环境
+RUN conda create -n aispeech python=3.11.13 && \
+    echo "conda activate aispeech" >> ~/.bashrc
+
+SHELL ["conda", "run", "-n", "aispeech", "/bin/bash", "-c"]
 
 WORKDIR /app
 
