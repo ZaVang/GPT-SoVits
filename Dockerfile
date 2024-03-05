@@ -30,7 +30,7 @@ ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
 ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 
 # 创建并初始化conda环境
-RUN conda create -n aispeech python=3.11.13 && \
+RUN conda create -n aispeech python=3.10.13 && \
     echo "conda activate aispeech" >> ~/.bashrc
 
 SHELL ["conda", "run", "-n", "aispeech", "/bin/bash", "-c"]
