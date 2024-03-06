@@ -2,7 +2,7 @@ import os
 import sys
 from typing import Optional
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from fastapi import FastAPI, UploadFile, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, HTTPException, BackgroundTasks, APIRouter
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
 import json
@@ -44,33 +44,36 @@ async def remove_temp_file(path: str):
     os.remove(path)
 
 def setup_logging():
-    # 创建handler
-    handler = RotatingFileHandler('app.log', maxBytes=10000, backupCount=3)
-    # 定制化的格式，增加了[APP]前缀来区分应用程序本身的日志
-    formatter = logging.Formatter("[APP] %(asctime)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
+    #设置根日志记录器
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.INFO)
 
-    # FastAPI日志
-    fastapi_logger = logging.getLogger("fastapi")  # 使用"fastapi"作为日志名来明确区分
-    fastapi_logger.addHandler(handler)
-    fastapi_logger.setLevel(logging.INFO)
+    rotating_handler = RotatingFileHandler('app.log')
+    rotating_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    root_logger.addHandler(rotating_handler)
 
+    stream_handler = logging.StreamHandler(sys.stdout)
+    stream_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+    root_logger.addHandler(stream_handler)
+        
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 设置日志
     setup_logging()
     yield
     
-    
 app = FastAPI(lifespan=lifespan)
+router = APIRouter()
+
 # 挂载 Gradio 接口到 FastAPI 应用
 ui = webui()
 app = gr.mount_gradio_app(app, ui, path="/api/gradio")
+app.include_router(router, prefix="/ai-speech")
+
 
 @app.exception_handler(Exception)
 async def exception_handler(request, exc):
     return {"error": str(exc)}, 500
-
 
 # @app.post("/api/tts/upload-audio")
 # async def upload_audio(audio_file: UploadFile):
@@ -120,7 +123,8 @@ async def predict(
 
     except KeyError as e:
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
+    
 
 if __name__ == '__main__':
     # 运行Uvicorn服务器
-    uvicorn.run(app, host="0.0.0.0", port=8888)
+    uvicorn.run(app, host="0.0.0.0", port=8888, log_level="info")
