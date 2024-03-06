@@ -18,13 +18,13 @@ import torch
 import logging
 from utils.config import HParams
 
-logging.getLogger("numba").setLevel(logging.ERROR)
-logging.getLogger("matplotlib").setLevel(logging.ERROR)
+# logging.getLogger("numba").setLevel(logging.ERROR)
+# logging.getLogger("matplotlib").setLevel(logging.ERROR)
 
-MATPLOTLIB_FLAG = False
+# MATPLOTLIB_FLAG = False
 
-logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
-logger = logging
+# logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+# logger = logging
 
 class SupportedLanguage(Enum):
     ZH = 'zh'

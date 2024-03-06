@@ -11,6 +11,12 @@ GPT_weights
 SoVITS_weights
 TEMP
 *.ipynb
-input_audio
-output_audio
+input_audio/*
+output_audio/*
 .history
+app.log*
+Dockerfile
+.gitlab-ci.yml
+deploy.yaml
+Makefile
+.ipynb_checkpoints

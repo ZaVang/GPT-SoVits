@@ -17,8 +17,8 @@ def get_args():
     training_args.add_argument('-e', '--epochs', type=int, default=20, help='finetune epochs')
     training_args.add_argument('-lr', '--learning_rate', type=float, default=0.4, help='text low learning rate')
     training_args.add_argument('-bs', '--batch_size', type=int, default=16, help='batch size')
-    training_args.add_argument('-pd', '--pretrained_D', type=str, default='pretrained_models/s2D488k.pth', help='pretrained D path')
-    training_args.add_argument('-pg', '--pretrained_G', type=str, default='pretrained_models/s2G488k.pth', help='pretrained G path')
+    training_args.add_argument('-pd', '--pretrained_D', type=str, default='pretrained_models/sovits_weights/pretrained/s2D488k.pth', help='pretrained D path')
+    training_args.add_argument('-pg', '--pretrained_G', type=str, default='pretrained_models/sovits_weights/pretrained/s2G488k.pth', help='pretrained G path')
     training_args.add_argument('-nw', '--num_workers', type=int, default=0, help='num workers for dataloader')
     
     # Saving/Logging arguments
