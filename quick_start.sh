@@ -9,7 +9,7 @@ python src/train/train_sovits.py \
  -c src/configs/sovits.json \
  -n dolly \
  -t sovits \
- -e 6 \
+ -e 20 \
  -lr 0.4 \
  -bs 19 \
  -nw 0 \
@@ -20,7 +20,7 @@ python src/train/train_sovits.py \
 python src/train/train_gpt.py \
  -c src/configs/s1longer.yaml \
  -n dolly \
- -e 10 \
+ -e 20 \
  -bs 19 \
  --is_half \
  -nw 0 \

@@ -6,7 +6,7 @@ import torch.nn.functional as F
 import soundfile as sf
 import logging
 
-logging.getLogger("numba").setLevel(logging.WARNING)
+# logging.getLogger("numba").setLevel(logging.INFO)
 
 from transformers import (
     Wav2Vec2FeatureExtractor,

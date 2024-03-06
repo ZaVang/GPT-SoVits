@@ -175,7 +175,7 @@ if __name__ == "__main__":
     training_args = parser.add_argument_group('Training')
     training_args.add_argument('-e', '--epochs', type=int, default=20, help='finetune epochs')
     training_args.add_argument('-bs', '--batch_size', type=int, default=16, help='batch size')
-    training_args.add_argument('--pretrained_gpt', type=str, default='pretrained_models/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt', help='pretrained model')
+    training_args.add_argument('--pretrained_gpt', type=str, default='pretrained_models/gpt_weights/pretrained/s1bert25hz-2kh-longer-epoch=68e-step=50232.ckpt', help='pretrained model')
     training_args.add_argument('--is_half', action='store_true', help='use half precision')
     training_args.add_argument('--if_dpo', action='store_false', help='use dpo')
     training_args.add_argument('-nw', '--num_workers', type=int, default=0, help='num workers for dataloader')

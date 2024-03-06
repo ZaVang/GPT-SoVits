@@ -1,6 +1,7 @@
 import os
 import argparse
 import soundfile as sf
+import json
 
 from infer_tool import TTSInference
 
@@ -14,7 +15,8 @@ def generate_audio(sovits_weights,
                    prompt_language, 
                    text, 
                    text_language,
-                   how_to_cut=None
+                   how_to_cut=None,
+                   save=True
                    ):
     tts = TTSInference(sovits_weights=sovits_weights, gpt_weights=gpt_weights)
     
@@ -30,26 +32,49 @@ def generate_audio(sovits_weights,
     audio_generator = tts.infer(**infer_dict)
     
     sr, audio = next(audio_generator)
-    output_path = os.path.join(output_folder, f"{text[:6]}_output.wav")
-    sf.write(output_path, audio, sr)
-    print(f"Audio saved to {output_path}")
+    
+    if save:
+        ref_wav_name = ''.join(os.path.basename(ref_wav_path).split('.')[:-1])
+        output_path = os.path.join(output_folder, f"{ref_wav_name}_{text[:6]}.wav")
+        sf.write(output_path, audio, sr)
+        print(f"Audio saved to {output_path}")
+    else:
+        return sr, audio
     
 
 def process_batch(sovits_weights, gpt_weights, input_folder, output_folder, parameters_file):
-    with open(parameters_file, 'r', encoding='utf-8') as file:
-        for line in file:
-            ref_wav_path, prompt_text, prompt_language, text, text_language, how_to_cut = line.strip().split('|')
-            generate_audio(sovits_weights, 
-                           gpt_weights, 
-                           input_folder, 
-                           output_folder, 
-                           ref_wav_path, 
-                           prompt_text, 
-                           prompt_language, 
-                           text, 
-                           text_language, 
-                           how_to_cut
-                           )
+    _, file_extension = os.path.splitext(parameters_file)
+    
+    if file_extension.lower() == '.json':
+        with open(parameters_file, 'r', encoding='utf-8') as file:
+            parameters = json.load(file)
+            for param in parameters:
+                generate_audio(sovits_weights, 
+                               gpt_weights, 
+                               input_folder,
+                               output_folder,
+                               param['ref_wav_path'], 
+                               param['prompt_text'],
+                               param['prompt_language'], 
+                               param['text'],
+                               param['text_language'],
+                               param['how_to_cut']
+                               )
+    elif file_extension.lower() == '.txt':
+        with open(parameters_file, 'r', encoding='utf-8') as file:
+            for line in file:
+                ref_wav_path, prompt_text, prompt_language, text, text_language, how_to_cut = line.strip().split('|')
+                generate_audio(sovits_weights, 
+                            gpt_weights, 
+                            input_folder, 
+                            output_folder, 
+                            ref_wav_path, 
+                            prompt_text, 
+                            prompt_language, 
+                            text, 
+                            text_language, 
+                            how_to_cut
+                            )
 
 
 if __name__ == "__main__":
