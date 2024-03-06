@@ -15,7 +15,7 @@ tts_inference = TTSInference(is_half=False)
 LANG_DICT = {
     "中文": 'zh',
     "英文": 'en',   
-    "日文": 'jp',
+    "日文": 'ja',
     "中英混合": 'zh,en',
     "日英混合": 'ja,en',
     "多语种混合": 'auto',
@@ -114,14 +114,18 @@ def webui():
         """     
         )
         with gr.Tab('文本合成音频'):
-            gr.Markdown("Step1: 选择模型")
+            gr.Markdown(
+                """
+                Step1: 选择模型 \n
+                （gpt和sovits模型可以选择不一样的角色，这样生成的结果没有保障，有可能会是一种混合的声线。）
+                """
+                )
             with gr.Row():
                 with gr.Column():
                     gpt_speakers_list = gr.Dropdown(
                         choices = ['All speakers'] + list(gpt_model_handler.models_info.keys()),
-                        label = '选择角色',
-                        value = 'All speakers',
-                        info = 'Speakers to choose',
+                        label = 'gpt模型',
+                        info = '选择说话人',
                         interactive = True
                     )
                     gpt_model_list = gr.Dropdown(
@@ -134,9 +138,8 @@ def webui():
                 with gr.Column():
                     sovits_speakers_list = gr.Dropdown(
                         choices = ['All speakers'] + list(sovits_model_handler.models_info.keys()),
-                        label = '选择角色',
-                        value= 'All speakers',
-                        info = 'Speakers to choose',
+                        label = 'sovits模型',
+                        info = '选择说话人',
                         interactive = True
                     )
                     sovits_model_list = gr.Dropdown(
@@ -163,7 +166,13 @@ def webui():
                                             inputs=[sovits_speakers_list], 
                                             outputs=sovits_model_list)
             
-            gr.Markdown("Step2: 上传参考音频和文本")
+            gr.Markdown(
+                """
+                Step2: 上传参考音频和文本 \n
+                (这里也是要选择和上面模型一样的说话人的参考音频，实际生成时候会参考这个音频的声音特征来生成。\n
+                当然你也可以随便传个其他角色的音频，以达到一种混合的效果，但是质量没有保障。)
+                """
+            )
             with gr.Row():
                 tts_ref_audio = gr.Audio(label="请上传3~10秒内参考音频，超过会报错！", type="filepath")
                 with gr.Column():
@@ -182,6 +191,18 @@ def webui():
                                             value="中文",
                                             interactive=True,
                                             show_label=True)
+            
+            gr.Examples(
+                examples=[
+                    ['examples/dolly.wav', '要不是追随了你这么久，我肯定信了你这话。每次你说不想做，最后全都完美解决。', '中文'],
+                    ['examples/kesidi.wav', '听说，梅林大人曾在此地设下加护。他让金穗村从荒芜之地，变成如今这片四季丰收的富饶沃土。', '中文'],
+                    ['examples/weilun.wav', '这么说，将军身边这位先生一定是魔法师了。竟然选择仓鼠做使魔，不得不说，品味很独特。', '中文'],
+                    ['examples/maggie.wav', '大干一场吧！别担心，我给对手们准备了披萨做安慰奖~', '中文'],
+                    ['examples/hayami_saori.mp3', '完璧な私に変化なんて必要ないんだけど、そこまでいうなら、少しだけ付き合ってあげようかしら？', '日文']
+                          ],
+                inputs=[tts_ref_audio, tts_prompt_text, tts_prompt_language],
+                label='点击下面的示例一键填写，开始快速尝试'
+            )
             
             gr.Markdown("Step3: 输入需要合成的文本")
             with gr.Row():

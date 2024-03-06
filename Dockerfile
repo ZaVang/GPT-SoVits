@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     cmake \
     vim \
     tmux \
+    ffmpeg \
     libglu1-mesa \
     libxi-dev \
     libxmu-dev \

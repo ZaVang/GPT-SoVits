@@ -18,6 +18,7 @@ from server.webui import webui, LANG_DICT
 from server.modelhandler import ModelHandler
 from src.inference import TTSInference
 
+root_logger = logging.getLogger()
 
 gpt_model_handler = ModelHandler('pretrained_models/gpt_weights/')
 sovits_model_handler = ModelHandler('pretrained_models/sovits_weights/')
@@ -45,7 +46,6 @@ async def remove_temp_file(path: str):
 
 def setup_logging():
     #设置根日志记录器
-    root_logger = logging.getLogger()
     root_logger.setLevel(logging.INFO)
 
     rotating_handler = RotatingFileHandler('app.log')
@@ -88,7 +88,7 @@ async def predict(
             tts_inference.change_gpt_weights(data.gpt_weights)
         # 进行预测
         try:
-            print('generating......')
+            print('generating......', flush=True)
             audio_generator = tts_inference.infer(
                 data.ref_audio_path,
                 data.prompt_text,
@@ -102,9 +102,10 @@ async def predict(
                 ref_free=data.ref_free)
             
             sr, audio = next(audio_generator)
-            print('generation finished!')
+            print('generation finished!', flush=True)
 
         except Exception as e:
+            root_logger.error(f"Error during inference: {str(e)}", exc_info=True)
             raise HTTPException(status_code=500, detail="Error during inference")
         
         # 创建一个临时文件来保存音频数据

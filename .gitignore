@@ -11,7 +11,7 @@ GPT_weights
 SoVITS_weights
 TEMP
 *.ipynb
-input_audio
-output_audio
+input_audio/*
+output_audio/*
 .history
 app.log*
