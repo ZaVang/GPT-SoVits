@@ -65,13 +65,8 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 router = APIRouter()
 
-# 挂载 Gradio 接口到 FastAPI 应用
-ui = webui()
-app = gr.mount_gradio_app(app, ui, path="/ai-speech/api/gradio")
-app.include_router(router, prefix="/ai-speech")
 
-
-@app.exception_handler(Exception)
+@router.exception_handler(Exception)
 async def exception_handler(request, exc):
     return {"error": str(exc)}, 500
 
@@ -80,7 +75,7 @@ async def exception_handler(request, exc):
 #     return {"filename": audio_file.filename}
 
 
-@app.post("/api/tts/inference")
+@router.post("/api/tts/inference")
 async def predict(
                 #   audio_file: UploadFile, 
                   data: TTSModelRequest, 
@@ -124,6 +119,11 @@ async def predict(
     except KeyError as e:
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
     
+# 挂载 Gradio 接口到 FastAPI 应用
+ui = webui()
+app = gr.mount_gradio_app(app, ui, path="/ai-speech/api/gradio")
+app.include_router(router, prefix="/ai-speech")
+
 
 if __name__ == '__main__':
     # 运行Uvicorn服务器
