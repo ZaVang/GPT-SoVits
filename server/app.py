@@ -67,7 +67,7 @@ router = APIRouter()
 
 # 挂载 Gradio 接口到 FastAPI 应用
 ui = webui()
-app = gr.mount_gradio_app(app, ui, path="/api/gradio")
+app = gr.mount_gradio_app(app, ui, path="/ai-speech/api/gradio")
 app.include_router(router, prefix="/ai-speech")
 
 
