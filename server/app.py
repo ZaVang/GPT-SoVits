@@ -66,11 +66,11 @@ app = FastAPI(lifespan=lifespan)
 router = APIRouter()
 
 
-@router.exception_handler(Exception)
+@app.exception_handler(Exception)
 async def exception_handler(request, exc):
     return {"error": str(exc)}, 500
 
-# @app.post("/api/tts/upload-audio")
+# @router.post("/api/tts/upload-audio")
 # async def upload_audio(audio_file: UploadFile):
 #     return {"filename": audio_file.filename}
 
