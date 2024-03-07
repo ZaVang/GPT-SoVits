@@ -61,9 +61,9 @@ data_dir/
 
 ## Model Storage
 
-All models used by the project are stored in the `pretrained_models` directory. BERT and HuBERT models should be placed directly under `pretrained_models`. 
+All models used by the project are stored in the `pretrained_models` directory. BERT and HuBERT models should be placed directly under `pretrained_models`.
 
-The `gpt_weights` and `sovits_weights` directories contain models for GPT and SoVITS, respectively. 
+The `gpt_weights` and `sovits_weights` directories contain models for GPT and SoVITS, respectively.
 
 Within each of these directories, there is a folder named after the `name` parameter used during training, where models are copied upon training completion.
 
@@ -174,7 +174,7 @@ At the same time, this API also hosts a WebUI similar to the one described above
 http://localhost:8888/ai-speech/api/gradio
 ```
 
-### Acknowledgements
+# Acknowledgements
 
 This project builds upon the work of GPT-SoVITS, originally developed by RVC-Boss. We extend our deepest gratitude to RVC-Boss and all contributors to the GPT-SoVITS project for their pioneering work in the field and for making their code available to the community under the MIT License. This fork aims to explore further enhancements and applications of the original project, and we hope it contributes positively to the community.
 
