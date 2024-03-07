@@ -21,17 +21,17 @@ from utils.config import HParams
 # logging.getLogger("numba").setLevel(logging.ERROR)
 # logging.getLogger("matplotlib").setLevel(logging.ERROR)
 
-# MATPLOTLIB_FLAG = False
+MATPLOTLIB_FLAG = False
 
 # logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 # logger = logging
 
 class SupportedLanguage(Enum):
-    ZH = 'zh'
+    ZH = 'all_zh'
     EN = 'en'
-    JA = 'ja'
-    ZH_EN = 'zh,en'
-    JA_EN = 'ja,en'
+    JA = 'all_ja'
+    ZH_EN = 'zh'
+    JA_EN = 'ja'
     AUTO = 'auto'
     
 

@@ -398,4 +398,7 @@ arpa = {
 symbols = [pad] + c + v + ja_symbols + pu_symbols + list(arpa)
 symbols = sorted(set(symbols))
 if __name__ == "__main__":
+    a=[3, 251, 141, 225, 134, 4, 227, 168, 251, 214, 251, 290]
+    phones = [symbols[i] for i in a]
+    print(' '.join(phones))
     print(len(symbols))

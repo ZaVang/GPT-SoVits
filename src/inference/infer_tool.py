@@ -282,7 +282,8 @@ class TTSInference(InferenceModule):
 
     def get_phones_and_bert(self, text, language):
         dtype=torch.float16 if self.is_half == True else torch.float32
-        if language in {"en","zh","ja"}:
+        if language in {"en","all_zh","all_ja"}:
+            language = language.replace("all_","")
             if language == "en":
                 LangSegment.setfilters(["en"])
                 formattext = " ".join(tmp["text"] for tmp in LangSegment.getTexts(text))
@@ -299,7 +300,7 @@ class TTSInference(InferenceModule):
                     (1024, len(phones)),
                     dtype=torch.float16 if self.is_half == True else torch.float32,
                 ).to(self.device)
-        elif language in {"zh,en", "ja,en","auto"}:
+        elif language in {"zh", "ja","auto"}:
             textlist=[]
             langlist=[]
             LangSegment.setfilters(["zh","ja","en"])
