@@ -27,11 +27,11 @@ from utils.config import HParams
 # logger = logging
 
 class SupportedLanguage(Enum):
-    ZH = 'zh'
+    ZH = 'all_zh'
     EN = 'en'
-    JA = 'ja'
-    ZH_EN = 'zh,en'
-    JA_EN = 'ja,en'
+    JA = 'all_ja'
+    ZH_EN = 'zh'
+    JA_EN = 'ja'
     AUTO = 'auto'
     
 

@@ -13,11 +13,11 @@ gpt_model_handler = ModelHandler('pretrained_models/gpt_weights/')
 sovits_model_handler = ModelHandler('pretrained_models/sovits_weights/')
 tts_inference = TTSInference(is_half=False)
 LANG_DICT = {
-    "中文": 'zh',
+    "中文": 'all_zh',
     "英文": 'en',   
-    "日文": 'ja',
-    "中英混合": 'zh,en',
-    "日英混合": 'ja,en',
+    "日文": 'all_ja',
+    "中英混合": 'zh',
+    "日英混合": 'ja',
     "多语种混合": 'auto',
 }
 
@@ -198,6 +198,7 @@ def webui():
                     ['examples/kesidi.wav', '听说，梅林大人曾在此地设下加护。他让金穗村从荒芜之地，变成如今这片四季丰收的富饶沃土。', '中文'],
                     ['examples/weilun.wav', '这么说，将军身边这位先生一定是魔法师了。竟然选择仓鼠做使魔，不得不说，品味很独特。', '中文'],
                     ['examples/maggie.wav', '大干一场吧！别担心，我给对手们准备了披萨做安慰奖~', '中文'],
+                    ['examples/freddie.wav', "Most people only need a gentle nudge to follow the path I've planned out—and then they fall right into my trap.", '英文'],
                     ['examples/hayami_saori.mp3', '完璧な私に変化なんて必要ないんだけど、そこまでいうなら、少しだけ付き合ってあげようかしら？', '日文']
                           ],
                 inputs=[tts_ref_audio, tts_prompt_text, tts_prompt_language],

@@ -382,7 +382,6 @@ def evaluate(hps, generator, eval_loader, writer_eval):
             text,
             text_lengths,
         ) in enumerate(eval_loader):
-            print(111)
             if torch.cuda.is_available():
                 spec, spec_lengths = spec.cuda(), spec_lengths.cuda()
                 y, y_lengths = y.cuda(), y_lengths.cuda()
