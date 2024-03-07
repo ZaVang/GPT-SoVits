@@ -26,7 +26,7 @@ def name2go(wav_name: str,
 
 def get_semantic(input_txt_path: str,
                 save_path: str,
-                G_path: str='pretrained_models/s2G488k.pth',
+                G_path: str='pretrained_models/sovits_weights/pretrained/s2G488k.pth',
                 config_path: str='src/configs/sovits.json',
                 is_half: bool=False,
                 **kwargs
