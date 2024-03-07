@@ -172,7 +172,7 @@ if response.status_code == 200:
 http://localhost:8888/ai-speech/api/gradio
 ```
 
-### 致谢
+# 致谢
 
 本项目建立在GPT-SoVITS的工作基础上，原始开发者为RVC-Boss。我们向RVC-Boss以及所有对GPT-SoVITS项目做出贡献的人表示最深的感谢，感谢他们在该领域的开创性工作，并且将他们的代码在MIT许可下提供给社区。此分支旨在探索原始项目的进一步增强和应用，我们希望它能对社区做出积极的贡献。
 
