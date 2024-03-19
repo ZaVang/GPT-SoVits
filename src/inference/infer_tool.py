@@ -303,11 +303,15 @@ class TTSInference(InferenceModule):
         elif language in {"zh", "ja","auto"}:
             textlist=[]
             langlist=[]
-            LangSegment.setfilters(["zh","ja","en"])
+            LangSegment.setfilters(["zh","ja","en", "ko"])
             if language == "auto":
                 for tmp in LangSegment.getTexts(text):
-                    langlist.append(tmp["lang"])
-                    textlist.append(tmp["text"])
+                    if tmp["lang"] == "ko":
+                        langlist.append("zh")
+                        textlist.append(tmp["text"])
+                    else:
+                        langlist.append(tmp["lang"])
+                        textlist.append(tmp["text"])
             else:
                 for tmp in LangSegment.getTexts(text):
                     if tmp["lang"] == "en":
@@ -336,6 +340,7 @@ class TTSInference(InferenceModule):
 
 
     def get_bert_inf(self, phones, word2ph, norm_text, language):
+        language=language.replace("all_","")
         if language == "zh":
             bert_feature = self.get_bert_feature(norm_text, word2ph).to(self.device)#.to(dtype)
         else:
