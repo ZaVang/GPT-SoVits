@@ -1,3 +1,8 @@
-salman_misc_a.wav|只有征服，才能让我的族人得到尊重。|zh|战争，不会停止。|zh|None
-salman_misc_a.wav|只有征服，才能让我的族人得到尊重。|zh|只有最强的，才能够生存。|zh|None
-salman_misc_a.wav|只有征服，才能让我的族人得到尊重。|zh|我们将统治这片荒野，我们将吞噬一切。|zh|None
+fulani_ally_boost.wav|你们，好像很喜欢和我在一块儿|zh|不要小看我的宠物的力量|zh|None
+fulani_ally_boost.wav|你们，好像很喜欢和我在一块儿|zh|离开我，你想好了吗|zh|None
+fulani_ally_boost.wav|你们，好像很喜欢和我在一块儿|zh|干得不错，我的宝贝们|zh|None
+fulani_ally_boost.wav|你们，好像很喜欢和我在一块儿|zh|你也想，成为我的追随者吗|zh|None
+fulani_battle_begin_a.wav|你们的生与死，只在我一念之间|zh|不要小看我的宠物的力量|zh|None
+fulani_battle_begin_a.wav|你们的生与死，只在我一念之间|zh|离开我，你想好了吗|zh|None
+fulani_battle_begin_a.wav|你们的生与死，只在我一念之间|zh|干得不错，我的宝贝们|zh|None
+fulani_battle_begin_a.wav|你们的生与死，只在我一念之间|zh|你也想，成为我的追随者吗|zh|None
