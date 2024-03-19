@@ -17,8 +17,8 @@ from AR.data.data_module import Text2SemanticDataModule
 from AR.models.t2s_lightning_module import Text2SemanticLightningModule
 from AR.utils.io import load_yaml_config
 
-logging.getLogger("numba").setLevel(logging.WARNING)
-logging.getLogger("matplotlib").setLevel(logging.WARNING)
+logging.getLogger("numba").setLevel(logging.INFO)
+logging.getLogger("matplotlib").setLevel(logging.INFO)
 torch.set_float32_matmul_precision("high")
 from AR.utils import get_newest_ckpt
 from collections import OrderedDict

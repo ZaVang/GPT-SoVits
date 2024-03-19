@@ -61,6 +61,7 @@ def run(hps):
     train_loader = DataLoader(
         train_dataset,
         num_workers=hps.train.num_workers,
+        batch_size=hps.train.batch_size,
         shuffle=True,
         pin_memory=True,
         collate_fn=collate_fn,
