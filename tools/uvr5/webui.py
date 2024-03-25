@@ -1,8 +1,6 @@
 import os
 import traceback,gradio as gr
 import logging
-from tools.i18n.i18n import I18nAuto
-i18n = I18nAuto()
 
 logger = logging.getLogger(__name__)
 import librosa,ffmpeg
@@ -12,16 +10,16 @@ import sys
 from mdxnet import MDXNetDereverb
 from vr import AudioPre, AudioPreDeEcho
 
-weight_uvr5_root = "tools/uvr5/uvr5_weights"
+weight_uvr5_root = "pretrained_models/uvr5"
 uvr5_names = []
 for name in os.listdir(weight_uvr5_root):
     if name.endswith(".pth") or "onnx" in name:
         uvr5_names.append(name.replace(".pth", ""))
 
-device=sys.argv[1]
-is_half=eval(sys.argv[2])
-webui_port_uvr5=int(sys.argv[3])
-is_share=eval(sys.argv[4])
+device='cuda:0' if torch.cuda.is_available() else 'cpu'
+is_half=False
+webui_port_uvr5=5000
+is_share=False
 
 def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format0):
     infos = []
@@ -34,8 +32,8 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
             save_root_ins.strip(" ").strip('"').strip("\n").strip('"').strip(" ")
         )
         is_hp3 = "HP3" in model_name
-        if model_name == "onnx_dereverb_By_FoxJoy":
-            pre_fun = MDXNetDereverb(15)
+        if model_name == "vocals.onnx":
+            pre_fun = MDXNetDereverb(f"{weight_uvr5_root}/{model_name}", 15)
         else:
             func = AudioPre if "DeEcho" not in model_name else AudioPreDeEcho
             pre_fun = func(
@@ -94,7 +92,7 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
         yield "\n".join(infos)
     finally:
         try:
-            if model_name == "onnx_dereverb_By_FoxJoy":
+            if model_name == "vocals.onnx":
                 del pre_fun.pred.model
                 del pre_fun.pred.model_
             else:
@@ -109,51 +107,48 @@ def uvr(model_name, inp_root, save_root_vocal, paths, save_root_ins, agg, format
 
 with gr.Blocks(title="UVR5 WebUI") as app:
     gr.Markdown(
-        value=
-            i18n("本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>.")
+        value="本软件以MIT协议开源, 作者不对软件具备任何控制力, 使用软件者、传播软件导出的声音者自负全责. <br>如不认可该条款, 则不能使用或引用软件包内任何代码和文件. 详见根目录<b>LICENSE</b>."
     )
     with gr.Tabs():
-        with gr.TabItem(i18n("伴奏人声分离&去混响&去回声")):
+        with gr.TabItem("伴奏人声分离&去混响&去回声"):
             with gr.Group():
                 gr.Markdown(
-                    value=i18n(
-                        "人声伴奏分离批量处理， 使用UVR5模型。 <br>合格的文件夹路径格式举例： E:\\codes\\py39\\vits_vc_gpu\\白鹭霜华测试样例(去文件管理器地址栏拷就行了)。 <br>模型分为三类： <br>1、保留人声：不带和声的音频选这个，对主人声保留比HP5更好。内置HP2和HP3两个模型，HP3可能轻微漏伴奏但对主人声保留比HP2稍微好一丁点； <br>2、仅保留主人声：带和声的音频选这个，对主人声可能有削弱。内置HP5一个模型； <br> 3、去混响、去延迟模型（by FoxJoy）：<br>  (1)MDX-Net(onnx_dereverb):对于双通道混响是最好的选择，不能去除单通道混响；<br>&emsp;(234)DeEcho:去除延迟效果。Aggressive比Normal去除得更彻底，DeReverb额外去除混响，可去除单声道混响，但是对高频重的板式混响去不干净。<br>去混响/去延迟，附：<br>1、DeEcho-DeReverb模型的耗时是另外2个DeEcho模型的接近2倍；<br>2、MDX-Net-Dereverb模型挺慢的；<br>3、个人推荐的最干净的配置是先MDX-Net再DeEcho-Aggressive。"
-                    )
+                    value="人声伴奏分离批量处理， 使用UVR5模型。 <br>合格的文件夹路径格式举例： E:\\codes\\py39\\vits_vc_gpu\\白鹭霜华测试样例(去文件管理器地址栏拷就行了)。 <br>模型分为三类： <br>1、保留人声：不带和声的音频选这个，对主人声保留比HP5更好。内置HP2和HP3两个模型，HP3可能轻微漏伴奏但对主人声保留比HP2稍微好一丁点； <br>2、仅保留主人声：带和声的音频选这个，对主人声可能有削弱。内置HP5一个模型； <br> 3、去混响、去延迟模型（by FoxJoy）：<br>  (1)MDX-Net(onnx_dereverb):对于双通道混响是最好的选择，不能去除单通道混响；<br>&emsp;(234)DeEcho:去除延迟效果。Aggressive比Normal去除得更彻底，DeReverb额外去除混响，可去除单声道混响，但是对高频重的板式混响去不干净。<br>去混响/去延迟，附：<br>1、DeEcho-DeReverb模型的耗时是另外2个DeEcho模型的接近2倍；<br>2、MDX-Net-Dereverb模型挺慢的；<br>3、个人推荐的最干净的配置是先MDX-Net再DeEcho-Aggressive。"
                 )
                 with gr.Row():
                     with gr.Column():
                         dir_wav_input = gr.Textbox(
-                            label=i18n("输入待处理音频文件夹路径"),
+                            label="输入待处理音频文件夹路径",
                             placeholder="C:\\Users\\Desktop\\todo-songs",
                         )
                         wav_inputs = gr.File(
-                            file_count="multiple", label=i18n("也可批量输入音频文件, 二选一, 优先读文件夹")
+                            file_count="multiple", label="也可批量输入音频文件, 二选一, 优先读文件夹"
                         )
                     with gr.Column():
-                        model_choose = gr.Dropdown(label=i18n("模型"), choices=uvr5_names)
+                        model_choose = gr.Dropdown(label="模型", choices=uvr5_names)
                         agg = gr.Slider(
                             minimum=0,
                             maximum=20,
                             step=1,
-                            label=i18n("人声提取激进程度"),
+                            label="人声提取激进程度",
                             value=10,
                             interactive=True,
                             visible=False,  # 先不开放调整
                         )
                         opt_vocal_root = gr.Textbox(
-                            label=i18n("指定输出主人声文件夹"), value="output/uvr5_opt"
+                            label="指定输出主人声文件夹", value="output_audio/uvr5_opt"
                         )
                         opt_ins_root = gr.Textbox(
-                            label=i18n("指定输出非主人声文件夹"), value="output/uvr5_opt"
+                            label="指定输出非主人声文件夹", value="output_audio/uvr5_opt"
                         )
                         format0 = gr.Radio(
-                            label=i18n("导出文件格式"),
+                            label="导出文件格式",
                             choices=["wav", "flac", "mp3", "m4a"],
                             value="flac",
                             interactive=True,
                         )
-                    but2 = gr.Button(i18n("转换"), variant="primary")
-                    vc_output4 = gr.Textbox(label=i18n("输出信息"))
+                    but2 = gr.Button("转换", variant="primary")
+                    vc_output4 = gr.Textbox(label="输出信息")
                     but2.click(
                         uvr,
                         [
@@ -168,10 +163,6 @@ with gr.Blocks(title="UVR5 WebUI") as app:
                         [vc_output4],
                         api_name="uvr_convert",
                     )
-app.queue(concurrency_count=511, max_size=1022).launch(
-    server_name="0.0.0.0",
-    inbrowser=True,
-    share=is_share,
+app.launch(
     server_port=webui_port_uvr5,
-    quiet=True,
 )

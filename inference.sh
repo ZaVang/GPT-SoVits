@@ -1,10 +1,10 @@
 #!/bin/bash
 
 python src/inference/inference.py \
- --sovits_weights pretrained_models/sovits_weights/fulani_cn/fulani_cn_e25_s175.pth \
- --gpt_weights pretrained_models/gpt_weights/fulani_cn/fulani_cn-e25.ckpt \
+ --sovits_weights pretrained_models/sovits_weights/varus/varus_e50_s650.pth \
+ --gpt_weights pretrained_models/gpt_weights/varus/varus-e50.ckpt \
  --parameters_file inference_parameters.txt \
- --output_folder output_audio/fulani_cn \
+ --output_folder output_audio/varus \
 
 #  python src/inference/inference.py \
 #  --sovits_weights pretrained_models/sovits_weights/dolly/dolly_e20_s140.pth \
