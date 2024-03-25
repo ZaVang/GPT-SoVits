@@ -90,21 +90,21 @@ def get_models(device, dim_f, dim_t, n_fft):
 class Predictor:
     def __init__(self, args):
         import onnxruntime as ort
-
-        logger.info(ort.get_available_providers())
         self.args = args
         self.model_ = get_models(
             device=cpu, dim_f=args.dim_f, dim_t=args.dim_t, n_fft=args.n_fft
         )
+            
+        available_providers = ort.get_available_providers()
+        desired_providers = ['CUDAExecutionProvider', 'DmlExecutionProvider', 'CPUExecutionProvider']
+
+        selected_providers = [provider for provider in desired_providers if provider in available_providers]
+
         self.model = ort.InferenceSession(
-            os.path.join(args.onnx, self.model_.target_name + ".onnx"),
-            providers=[
-                "CUDAExecutionProvider",
-                "DmlExecutionProvider",
-                "CPUExecutionProvider",
-            ],
+            args.onnx,
+            providers=selected_providers,
         )
-        logger.info("ONNX load done")
+        print("ONNX load done")
 
     def demix(self, mix):
         samples = mix.shape[-1]
@@ -239,8 +239,8 @@ class Predictor:
 
 
 class MDXNetDereverb:
-    def __init__(self, chunks):
-        self.onnx = "%s/uvr5_weights/onnx_dereverb_By_FoxJoy"%os.path.dirname(os.path.abspath(__file__))
+    def __init__(self, model_path, chunks):
+        self.onnx = model_path
         self.shifts = 10  # 'Predict with randomised equivariant stabilisation'
         self.mixing = "min_mag"  # ['default','min_mag','max_mag']
         self.chunks = chunks
@@ -254,3 +254,9 @@ class MDXNetDereverb:
 
     def _path_audio_(self, input, vocal_root, others_root, format, is_hp3=False):
         self.pred.prediction(input, vocal_root, others_root, format)
+
+
+if __name__ == "__main__":
+    file_path = 'pretrained_models/uvr5/vocals.onnx'
+    chunks = 15
+    pre_fun = MDXNetDereverb(file_path, chunks)
