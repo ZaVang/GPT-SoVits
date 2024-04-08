@@ -167,7 +167,7 @@ class TTSInference(InferenceModule):
                 wav16k, _ = librosa.load(ref_wav_path, sr=16000)
             else:
                 wav16k, _ = ref_wav_path
-            if (wav16k.shape[0] > 160000 or wav16k.shape[0] < 32000):
+            if (wav16k.shape[0] > 160000 or wav16k.shape[0] < 16000):
                 raise OSError("参考音频在3~10秒范围外，请更换！")
             wav16k = torch.from_numpy(wav16k)
             zero_wav_torch = torch.from_numpy(zero_wav)
