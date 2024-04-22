@@ -59,6 +59,9 @@ data_dir/
 - `text`: The actual text that corresponds to the audio.
 - `vocal/`: This folder contains the preprocessed WAV audio files, such as `xxx.wav`. Make sure that the audio files have been preprocessed according to the guidelines mentioned in the original project's README.
 
+#### New Command Line Operation for Audio Splitting
+Focus primarily on the first two parameters: `input_path` is the path to the original audio file or directory, and `output_path` is the directory where the subdivided audio clips will be saved. If the original audio is too quiet, you can increase the `alpha` parameter, which ranges from 0 to 1, with higher values making the sound louder.
+
 ## Model Storage
 
 All models used by the project are stored in the `pretrained_models` directory. BERT and HuBERT models should be placed directly under `pretrained_models`.

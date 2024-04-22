@@ -59,6 +59,21 @@ data_dir/
 - `text`：对应音频的实际文本。
 - `vocal/`：此文件夹包含所有预处理过的WAV音频文件，如 `xxx.wav`。请确保音频文件已根据原始项目进行了预处理，详情参考原项目的 `(Optional) If you need, here will provide the command line operation mode` 章节。
 
+#### 新增切分音频的命令行操作
+```
+python slice_audio.py \
+    --input_path path_to_original_audio_file_or_directory \
+    --output_path directory_where_subdivided_audio_clips_will_be_saved \
+    --db_threshold The dB threshold for silence detection \
+    --min_length minimum_duration_of_each_subclip \
+    --min_interval shortest_time_gap_between_adjacent_subclips \ 
+    --hop_size step_size_for_computing_volume_curve \
+    --max_sil_kept maximum silence length kept around the sliced clip \
+    --max_amp maximum amplitude of the sliced audio clips \
+    --alpha alpha value for amplitude adjustment
+```
+主要看前两个参数就好，`input_path`是输入音频文件或文件夹的路径，`output_path`是切分后的音频文件保存的文件夹路径。如果觉得原始音频声音太小，可以调高`alpha`参数，范围为0到1，值越大声音越大。
+
 ## 模型位置
 
 项目使用的所有模型都存储在 `pretrained_models`目录中。BERT和HuBERT模型直接放在 `pretrained_models`下。
