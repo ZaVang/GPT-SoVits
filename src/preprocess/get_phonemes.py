@@ -46,43 +46,42 @@ def get_bert_feature(text, word2ph, tokenizer, bert_model, device):
        return phone_level_feature.T
 
 def process(data, save_dir, tokenizer, bert_model, device):
-   """
-   处理输入数据，获取音素序列及BERT特征。
+    """
+    处理输入数据，获取音素序列及BERT特征。
 
-   Args:
-       data (list): 输入数据列表，每个元素为[wav_name, text, language]
-       save_dir (str): BERT特征保存目录
-       tokenizer (BertTokenizer): BERT分词器对象
-       bert_model (BertModel): BERT模型对象
-       device (str): 设备类型（'cuda'或'cpu'）
+    Args:
+        data (list): 输入数据列表，每个元素为[wav_name, text, language]
+        save_dir (str): BERT特征保存目录
+        tokenizer (BertTokenizer): BERT分词器对象
+        bert_model (BertModel): BERT模型对象
+        device (str): 设备类型（'cuda'或'cpu'）
 
-   Returns:
-       list: 处理结果列表，每个元素为[wav_name, 音素序列, word2ph, norm_text]
-   """
-   res = []
-   os.makedirs(save_dir, exist_ok=True)
+    Returns:
+        list: 处理结果列表，每个元素为[wav_name, 音素序列, word2ph, norm_text]
+    """
+    res = []
+    os.makedirs(save_dir, exist_ok=True)
 
-   for name, text, lan in data:
-       try:
-           name = os.path.basename(name)
-           # 清理文本并获取音素序列、单词到音素的映射以及规范化后的文本
-           phones, word2ph, norm_text = clean_text(
-               text.replace("%", "-").replace("￥", ","), lan
-           )
-           path_bert = f"{save_dir}/{name}.pt"
+    for name, text, lan in data:
+        try:
+            name = os.path.basename(name)
+            # 清理文本并获取音素序列、单词到音素的映射以及规范化后的文本
+            phones, word2ph, norm_text = clean_text(
+                text.replace("%", "-").replace("￥", ","), lan
+            )
+            path_bert = f"{save_dir}/{name}.pt"
 
-           # 如果是中文文本且对应的BERT特征文件不存在，则计算并保存BERT特征
-           if os.path.exists(path_bert) == False and lan == "zh":
-               bert_feature = get_bert_feature(norm_text, word2ph, tokenizer, bert_model, device)
-               assert bert_feature.shape[-1] == len(phones)
-               torch.save(bert_feature, path_bert)
+            # 如果是中文文本且对应的BERT特征文件不存在，则计算并保存BERT特征
+            if os.path.exists(path_bert) == False and lan == "zh":
+                bert_feature = get_bert_feature(norm_text, word2ph, tokenizer, bert_model, device)
+                assert bert_feature.shape[-1] == len(phones)
+                torch.save(bert_feature, path_bert)
+            phones = " ".join(phones)
+            res.append([name, phones, word2ph, norm_text])
+        except:
+            print(name, text, traceback.format_exc())
 
-               phones = " ".join(phones)
-               res.append([name, phones, word2ph, norm_text])
-       except:
-           print(name, text, traceback.format_exc())
-
-   return res
+    return res
 
 def get_phonemes(input_txt_path: str, 
                  save_path: str, 
