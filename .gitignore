@@ -20,3 +20,4 @@ Dockerfile
 deploy.yaml
 Makefile
 .ipynb_checkpoints
+onnx/
