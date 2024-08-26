@@ -40,7 +40,8 @@ WORKDIR /app
 
 # 安装依赖
 COPY requirements.txt /app/requirements.txt
-RUN pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118 && \
+RUN echo "10.65.3.241 download.pytorch.org">>/etc/hosts && \
+    pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118 && \
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
     pip install -r /app/requirements.txt
 
