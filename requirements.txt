@@ -4,8 +4,9 @@ tensorboard
 librosa
 numba
 pytorch-lightning
-gradio==4.19
-gradio_client
+gradio==4.41.0
+gradio_client==1.3.0
+fastapi==0.112.1
 ffmpeg-python
 onnxruntime
 tqdm
