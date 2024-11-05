@@ -60,6 +60,7 @@ data_dir/
 - `vocal/`：此文件夹包含所有预处理过的WAV音频文件，如 `xxx.wav`。请确保音频文件已根据原始项目进行了预处理，详情参考原项目的 `(Optional) If you need, here will provide the command line operation mode` 章节。
 
 #### 新增切分音频的命令行操作
+
 ```
 python slice_audio.py \
     --input_path path_to_original_audio_file_or_directory \
@@ -72,7 +73,8 @@ python slice_audio.py \
     --max_amp maximum amplitude of the sliced audio clips \
     --alpha alpha value for amplitude adjustment
 ```
-主要看前两个参数就好，`input_path`是输入音频文件或文件夹的路径，`output_path`是切分后的音频文件保存的文件夹路径。如果觉得原始音频声音太小，可以调高`alpha`参数，范围为0到1，值越大声音越大。
+
+主要看前两个参数就好，`input_path`是输入音频文件或文件夹的路径，`output_path`是切分后的音频文件保存的文件夹路径。如果觉得原始音频声音太小，可以调高 `alpha`参数，范围为0到1，值越大声音越大。
 
 ## 模型位置
 
@@ -179,6 +181,39 @@ response = requests.post(url, data=json.dumps(data), headers=headers)
 if response.status_code == 200:
     with open('output_audio/test.wav', 'wb') as f:
         f.write(response.content)
+```
+
+对于批量推理，可以如下方式调用：
+
+```python
+import requests
+import json
+
+url = 'http://localhost:5000/ai-speech/api/tts/batch_inference'
+request_data = {
+    "character_name": "kuidou_cn",
+    "text": "那时候我才意识到我已经迷路了。我想等到红灯时停下自行车看导航，谁知一路都是绿灯，由此一路往前，我冲着众人鞠躬，这便是我迟到十年的原因。",
+    "text_language": "中文",
+    "how_to_cut": "不切",
+    "top_k": 5,
+    "top_p": 0.7,
+    "temperature": 0.7,
+    "ref_free": False
+}
+files = {
+    "excel_file": open("example.xlsx", "rb"),
+    "data": (None, json.dumps(request_data), 'application/json')
+}
+
+response = requests.post(url, files=files)
+
+if response.status_code == 200:
+    with open("output.zip", "wb") as f:
+        f.write(response.content)
+    print("文件已成功保存为output.zip")
+else:
+    print(f"请求失败，状态码: {response.status_code}")
+    print(response.content)
 ```
 
 同时，这个API还挂载了一个与上述类似的WebUI，可以通过以下方式访问：

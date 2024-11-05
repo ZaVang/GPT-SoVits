@@ -60,6 +60,7 @@ data_dir/
 - `vocal/`: This folder contains the preprocessed WAV audio files, such as `xxx.wav`. Make sure that the audio files have been preprocessed according to the guidelines mentioned in the original project's README.
 
 #### New Command Line Operation for Audio Splitting
+
 Focus primarily on the first two parameters: `input_path` is the path to the original audio file or directory, and `output_path` is the directory where the subdivided audio clips will be saved. If the original audio is too quiet, you can increase the `alpha` parameter, which ranges from 0 to 1, with higher values making the sound louder.
 
 ## Model Storage
@@ -169,6 +170,39 @@ response = requests.post(url, data=json.dumps(data), headers=headers)
 if response.status_code == 200:
     with open('output_audio/test.wav', 'wb') as f:
         f.write(response.content)
+```
+
+For batch inference, you can call the api as follows:
+
+```python
+import requests
+import json
+
+url = 'http://localhost:5000/ai-speech/api/tts/batch_inference'
+request_data = {
+    "character_name": "kuidou_cn",
+    "text": "那时候我才意识到我已经迷路了。我想等到红灯时停下自行车看导航，谁知一路都是绿灯，由此一路往前，我冲着众人鞠躬，这便是我迟到十年的原因。",
+    "text_language": "中文",
+    "how_to_cut": "不切",
+    "top_k": 5,
+    "top_p": 0.7,
+    "temperature": 0.7,
+    "ref_free": False
+}
+files = {
+    "excel_file": open("example.xlsx", "rb"),
+    "data": (None, json.dumps(request_data), 'application/json')
+}
+
+response = requests.post(url, files=files)
+
+if response.status_code == 200:
+    with open("output.zip", "wb") as f:
+        f.write(response.content)
+    print("文件已成功保存为output.zip")
+else:
+    print(f"请求失败，状态码: {response.status_code}")
+    print(response.content)
 ```
 
 At the same time, this API also hosts a WebUI similar to the one described above, which can be accessed through:

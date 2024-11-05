@@ -1,100 +1,100 @@
-[
-    {
+{
+    "kuidou_cn": {
         "audio_path": "examples/kuidou_cn.wav",
         "ref_text": "超级空投就在我附近，有人要来抢抢看么？",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/kuidou_cn/kuidou_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/kuidou_cn/kuidou_cn_e30_s540.pth"
     },
-    {
+    "kuidou_en": {
         "audio_path": "examples/kuidou_en.wav",
         "ref_text": "Airdrop Rain close by—bet there's some solid loot.",
         "ref_language": "英文",
         "gpt_weights": "pretrained_models/gpt_weights/kuidou_en/kuidou_en-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/kuidou_en/kuidou_en_e30_s150.pth"
     },
-    {
+    "linbo_cn": {
         "audio_path": "examples/linbo_cn.wav",
         "ref_text": "正在开启空投，辛苦掩护。",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/linbo_cn/linbo_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/linbo_cn/linbo_cn_e30_s450.pth"
     },
-    {
+    "linbo_en": {
         "audio_path": "examples/linbo_en.wav",
         "ref_text": "Securing the Airdrop. Backup required.",
         "ref_language": "英文",
         "gpt_weights": "pretrained_models/gpt_weights/linbo_en/linbo_en-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/linbo_en/linbo_en_e30_s480.pth"
     },
-    {
+    "maychelle_cn": {
         "audio_path": "examples/maychelle_cn.wav",
         "ref_text": "我在领空投了，记得保证我的安全！",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/maychelle_cn/maychelle_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/maychelle_cn/maychelle_cn_e30_s360.pth"
     },
-    {
+    "maychelle_en": {
         "audio_path": "examples/maychelle_en.wav",
         "ref_text": "I'm grabbing the Airdrop. Make sure to keep me safe!",
         "ref_language": "英文",
         "gpt_weights": "pretrained_models/gpt_weights/maychelle_en/maychelle_en-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/maychelle_en/maychelle_en_e30_s360.pth"
     },
-    {
+    "manman3_cn": {
         "audio_path": "examples/manman3_cn.wav",
         "ref_text": "幸好这里有座小岛，不然我们早就被海浪淹没了！",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/manman3_cn/manman3_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/manman3_cn/manman3_cn_e30_s390.pth"
     },
-    {
+    "manman4_cn": {
         "audio_path": "examples/manman4_cn.wav",
         "ref_text": "唔……只是头有点晕，还好。",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/manman4_cn/manman4_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/manman4_cn/manman4_cn_e30_s600.pth"
     },
-    {
+    "xinbada_cn": {
         "audio_path": "examples/xinbada_cn.wav",
         "ref_text": "你到底是谁，竟然一个人从海上漂流过来？",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/xinbada_cn/xinbada_cn-e30.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/xinbada_cn/xinbada_cn_e30_s720.pth"
     },
-    {
+    "dolly": {
         "audio_path": "examples/dolly.wav",
         "ref_text": "要不是追随了你这么久，我肯定信了你这话。每次你说不想做，最后全都完美解决。",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/dolly/dolly-e25.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/dolly/dolly_e25_s150.pth"
     },
-    {
+    "kesidi": {
         "audio_path": "examples/kesidi.wav",
         "ref_text": "听说，梅林大人曾在此地设下加护。他让金穗村从荒芜之地，变成如今这片四季丰收的富饶沃土。",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/kesidi/kesidi-e25.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/kesidi/kesidi_e20_s160.pth"
     },
-    {
+    "weilun": {
         "audio_path": "examples/weilun.wav",
         "ref_text": "这么说，将军身边这位先生一定是魔法师了。竟然选择仓鼠做使魔，不得不说，品味很独特。",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/weilun/weilun-e25.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/weilun/weilun_e20_s260.pth"
     },
-    {
+    "maggie": {
         "audio_path": "examples/maggie.wav",
         "ref_text": "大干一场吧！别担心，我给对手们准备了披萨做安慰奖~",
         "ref_language": "中文",
         "gpt_weights": "pretrained_models/gpt_weights/maggie/maggie-e25.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/maggie/maggie_e16_s320.pth"
     },
-    {
+    "hayami_saori": {
         "audio_path": "examples/hayami_saori.mp3",
         "ref_text": "完璧な私に変化なんて必要ないんだけど、そこまでいうなら、少しだけ付き合ってあげようかしら？",
         "ref_language": "日文",
         "gpt_weights": "pretrained_models/gpt_weights/hayami_saori/hayami_saori-e25.ckpt",
         "sovits_weights": "pretrained_models/sovits_weights/hayami_saori/hayami_saori_e8_s512.pth"
     }
-]
+}

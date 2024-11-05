@@ -1,10 +1,11 @@
 import os
 import sys
-from typing import Optional
+from typing import Any, Optional
+import zipfile
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from fastapi import FastAPI, UploadFile, HTTPException, BackgroundTasks, APIRouter
 from contextlib import asynccontextmanager
-from pydantic import BaseModel
+from pydantic import BaseModel, model_validator
 import json
 import tempfile
 import soundfile as sf
@@ -13,6 +14,7 @@ from logging.handlers import RotatingFileHandler
 from starlette.responses import FileResponse
 import gradio as gr
 import uvicorn
+import pandas as pd
 
 from server.webui import webui, LANG_DICT
 from server.modelhandler import ModelHandler
@@ -41,8 +43,16 @@ class TTSModelRequest(BaseModel):
     top_p: Optional[float] = 0.7
     temperature: Optional[float] = 0.7
     ref_free: Optional[bool] = False
-    
 
+    @model_validator(mode='before')
+    @classmethod
+    def validate_to_json(cls, value: Any) -> Any:
+        print(value)
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return value
+    
+    
 async def remove_temp_file(path: str):
     os.remove(path)
 
@@ -127,7 +137,82 @@ async def predict(
 
     except KeyError as e:
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
+
+
+@router.post("/api/tts/batch_inference")
+async def batch_predict(
+    data: TTSModelRequest,
+    excel_file: UploadFile, 
+    background_tasks: BackgroundTasks
+):
+    try:
+        # 读取上传的Excel文件
+        contents = await excel_file.read()
+        df = pd.read_excel(contents, header=None)
+        texts = df[0].tolist()
+        filenames = df[1].tolist()
+        
+        if data.character_name is not None:
+            data.ref_audio_path = example_json[data.character_name]['audio_path']
+            data.prompt_text = example_json[data.character_name]['ref_text']
+            data.prompt_language = example_json[data.character_name]['ref_language']
+            data.gpt_weights = example_json[data.character_name]['gpt_weights']
+            data.sovits_weights = example_json[data.character_name]['sovits_weights']
+        if tts_inference.sovits_model != data.sovits_weights:
+            tts_inference.change_sovits_weights(data.sovits_weights) # type: ignore
+        if tts_inference.gpt_model!= data.gpt_weights:
+            tts_inference.change_gpt_weights(data.gpt_weights) # type: ignore
+        audio_files = []
+        for text, filename in zip(texts, filenames):
+            # 进行预测
+            try:
+                print('generating......', flush=True)
+                audio_generator = tts_inference.infer(
+                    data.ref_audio_path, # type: ignore
+                    data.prompt_text,
+                    LANG_DICT[data.prompt_language], # type: ignore
+                    text,
+                    LANG_DICT[data.text_language], # type: ignore
+                    how_to_cut=data.how_to_cut, # type: ignore
+                    top_k=data.top_k, # type: ignore
+                    top_p=data.top_p, # type: ignore
+                    temperature=data.temperature, # type: ignore
+                    ref_free=data.ref_free) # type: ignore
+                
+                sr, audio = next(audio_generator)
+                print('generation finished!', flush=True)
+
+            except Exception as e:
+                root_logger.error(f"Error during inference: {str(e)}", exc_info=True)
+                raise HTTPException(status_code=500, detail="Error during inference")
+            
+            # 创建一个临时文件来保存音频数据
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+            sf.write(temp_file.name, audio, sr, 'PCM_24')
+            
+            # 重命名临时文件为指定的文件名
+            final_path = os.path.join(tempfile.gettempdir(), filename)
+            os.rename(temp_file.name, final_path)
+            
+            audio_files.append(final_path)
+
+        # 将所有音频文件打包成一个zip文件
+        zip_file = tempfile.NamedTemporaryFile(delete=False, suffix=".zip")
+        with zipfile.ZipFile(zip_file.name, 'w') as zipf:
+            for audio_file in audio_files:
+                zipf.write(audio_file, os.path.basename(audio_file))
+        
+        # 在后台删除音频文件和zip文件
+        for audio_file in audio_files:
+            background_tasks.add_task(remove_temp_file, audio_file)
+        background_tasks.add_task(remove_temp_file, zip_file.name)
+
+        return FileResponse(zip_file.name, media_type='application/zip')  # 发送zip文件
+
+    except KeyError as e:
+        return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
     
+
 # 挂载 Gradio 接口到 FastAPI 应用
 ui = webui()
 app = gr.mount_gradio_app(app, ui, path="/ai-speech/api/gradio")
@@ -136,4 +221,4 @@ app.include_router(router, prefix="/ai-speech")
 
 if __name__ == '__main__':
     # 运行Uvicorn服务器
-    uvicorn.run(app, host="0.0.0.0", port=8888, log_level="info")
+    uvicorn.run(app, host="0.0.0.0", port=5000, log_level="info")
