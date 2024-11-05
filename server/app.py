@@ -43,7 +43,8 @@ class TTSModelRequest(BaseModel):
     top_p: Optional[float] = 0.7
     temperature: Optional[float] = 0.7
     ref_free: Optional[bool] = False
-
+    zip_filename: Optional[str] = None
+    
     @model_validator(mode='before')
     @classmethod
     def validate_to_json(cls, value: Any) -> Any:
@@ -148,9 +149,9 @@ async def batch_predict(
     try:
         # 读取上传的Excel文件
         contents = await excel_file.read()
-        df = pd.read_excel(contents, header=None)
-        texts = df[0].tolist()
-        filenames = df[1].tolist()
+        df = pd.read_excel(contents, header=0)  # 假设第一行是表头
+        texts = df.iloc[:, 0].tolist()  # 跳过表头
+        filenames = df.iloc[:, 1].tolist()  # 跳过表头
         
         if data.character_name is not None:
             data.ref_audio_path = example_json[data.character_name]['audio_path']
@@ -201,13 +202,16 @@ async def batch_predict(
         with zipfile.ZipFile(zip_file.name, 'w') as zipf:
             for audio_file in audio_files:
                 zipf.write(audio_file, os.path.basename(audio_file))
+        if data.zip_filename is not None:
+            final_zip_path = os.path.join(tempfile.gettempdir(), data.zip_filename)
+            os.rename(zip_file.name, final_zip_path)
         
         # 在后台删除音频文件和zip文件
         for audio_file in audio_files:
             background_tasks.add_task(remove_temp_file, audio_file)
-        background_tasks.add_task(remove_temp_file, zip_file.name)
+        background_tasks.add_task(remove_temp_file, final_zip_path)
 
-        return FileResponse(zip_file.name, media_type='application/zip')  # 发送zip文件
+        return FileResponse(final_zip_path, media_type='application/zip')  # 发送zip文件
 
     except KeyError as e:
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
