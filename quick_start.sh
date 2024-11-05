@@ -12,6 +12,7 @@ python src/preprocess/process.py \
 # train sovits model
 python src/train/train_sovits.py \
  -c src/configs/sovits.json \
+<<<<<<< HEAD
  -n $NAME \
  -t sovits \
  -e 30 \
@@ -19,7 +20,6 @@ python src/train/train_sovits.py \
  -bs 32 \
  -nw 0 \
  --save_every_epoch 10 \
- --keep_ckpts 10
 
 # train gpt model
 python src/train/train_gpt.py \
@@ -29,5 +29,11 @@ python src/train/train_gpt.py \
  -bs 32 \
  -nw 0 \
  --save_every_epoch 10
-
-
+=======
+ -n varus \
+ -t sovits \
+ -e 25 \
+ -lr 0.4 \
+ -bs 16 \
+ -nw 0 \
+ --save_every_epoch 5 \
