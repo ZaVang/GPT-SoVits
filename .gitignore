@@ -21,3 +21,5 @@ deploy.yaml
 Makefile
 .ipynb_checkpoints
 onnx/
+data/
+!data/check_audio.py

@@ -5,7 +5,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 import torch
 from torch.nn import functional as F
 from torch.utils.data import DataLoader
-from torch.utils.tensorboard import SummaryWriter
+from torch.utils.tensorboard.writer import SummaryWriter
 from torch.cuda.amp import autocast, GradScaler
 from tqdm import tqdm
 import logging
@@ -167,7 +167,7 @@ def run(hps):
         scheduler_g.step()
         scheduler_d.step()
         
-    scaler = GradScaler(enabled=hps.train.fp16_run)
+    scaler = torch.amp.GradScaler(enabled=hps.train.fp16_run) # type: ignore
 
     for epoch in range(epoch_str, hps.train.epochs + 1):
         train_and_evaluate(epoch, hps, [net_g, net_d], [optim_g, optim_d], [scheduler_g, scheduler_d], scaler, [train_loader, None], logger, [writer, writer_eval])
@@ -191,9 +191,9 @@ def train_and_evaluate(epoch, hps, nets, optims, schedulers, scaler, loaders, lo
     for batch_idx, items in enumerate(tqdm(train_loader)):
         items = [item.cuda(non_blocking=True) if item is not None else None for item in items]
         ssl, ssl_lengths, spec, spec_lengths, y, y_lengths, text, text_lengths = items
-        ssl.requires_grad = False
+        ssl.requires_grad = False # type: ignore
     
-        with autocast(enabled=hps.train.fp16_run):
+        with torch.amp.autocast('cuda', enabled=hps.train.fp16_run): # type: ignore
             y_hat, kl_ssl, ids_slice, x_mask, z_mask,\
                 (z, z_p, m_p, logs_p, m_q, logs_q), stats_ssl = net_g(ssl, spec, spec_lengths, text, text_lengths)
 
@@ -225,7 +225,7 @@ def train_and_evaluate(epoch, hps, nets, optims, schedulers, scaler, loaders, lo
             # Discriminator
             y_d_hat_r, y_d_hat_g, _, _ = net_d(y, y_hat.detach())
             
-            with autocast(enabled=False):
+            with torch.amp.autocast('cuda', enabled=False): # type: ignore
                 loss_disc, losses_disc_r, losses_disc_g = discriminator_loss(y_d_hat_r, y_d_hat_g)
                 loss_disc_all = loss_disc
                 
@@ -235,10 +235,10 @@ def train_and_evaluate(epoch, hps, nets, optims, schedulers, scaler, loaders, lo
         grad_norm_d = commons.clip_grad_value_(net_d.parameters(), None)
         scaler.step(optim_d)
         
-        with autocast(enabled=hps.train.fp16_run):
+        with torch.amp.autocast('cuda', enabled=hps.train.fp16_run): # type: ignore
             # Generator
             y_d_hat_r, y_d_hat_g, fmap_r, fmap_g = net_d(y, y_hat)
-            with autocast(enabled=False):
+            with torch.amp.autocast('cuda', enabled=False): # type: ignore
                 loss_mel = F.l1_loss(y_mel, y_hat_mel) * hps.train.c_mel
                 loss_kl = kl_loss(z_p, logs_q, m_p, logs_p, z_mask) * hps.train.c_kl
                 loss_fm = feature_loss(fmap_r, fmap_g)

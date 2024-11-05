@@ -23,15 +23,17 @@ root_logger = logging.getLogger()
 gpt_model_handler = ModelHandler('pretrained_models/gpt_weights/')
 sovits_model_handler = ModelHandler('pretrained_models/sovits_weights/')
 tts_inference = TTSInference(is_half=False)
-
+with open('server/example.json', 'r') as f:
+    example_json = json.load(f)
 
 # 模型请求参数数据模型
 class TTSModelRequest(BaseModel):
-    ref_audio_path: str
-    sovits_weights: str
-    gpt_weights: str
-    prompt_text: str
-    prompt_language: str
+    character_name: Optional[str] = None
+    ref_audio_path: Optional[str] = None
+    sovits_weights: Optional[str] = None
+    gpt_weights: Optional[str] = None
+    prompt_text: Optional[str] = None
+    prompt_language: Optional[str] = None
     text: str
     text_language: str
     how_to_cut: Optional[str] = "不切"
@@ -82,24 +84,30 @@ async def predict(
                   background_tasks: BackgroundTasks
                   ):
     try:
+        if data.character_name is not None:
+            data.ref_audio_path = example_json[data.character_name]['audio_path']
+            data.prompt_text = example_json[data.character_name]['ref_text']
+            data.prompt_language = example_json[data.character_name]['ref_language']
+            data.gpt_weights = example_json[data.character_name]['gpt_weights']
+            data.sovits_weights = example_json[data.character_name]['sovits_weights']
         if tts_inference.sovits_model != data.sovits_weights:
-            tts_inference.change_sovits_weights(data.sovits_weights)
+            tts_inference.change_sovits_weights(data.sovits_weights) # type: ignore
         if tts_inference.gpt_model!= data.gpt_weights:
-            tts_inference.change_gpt_weights(data.gpt_weights)
+            tts_inference.change_gpt_weights(data.gpt_weights) # type: ignore
         # 进行预测
         try:
             print('generating......', flush=True)
             audio_generator = tts_inference.infer(
-                data.ref_audio_path,
+                data.ref_audio_path, # type: ignore
                 data.prompt_text,
-                LANG_DICT[data.prompt_language],
+                LANG_DICT[data.prompt_language], # type: ignore
                 data.text,
-                LANG_DICT[data.text_language],
-                how_to_cut=data.how_to_cut,
-                top_k=data.top_k,
-                top_p=data.top_p,
-                temperature=data.temperature,
-                ref_free=data.ref_free)
+                LANG_DICT[data.text_language], # type: ignore
+                how_to_cut=data.how_to_cut, # type: ignore
+                top_k=data.top_k, # type: ignore
+                top_p=data.top_p, # type: ignore
+                temperature=data.temperature, # type: ignore
+                ref_free=data.ref_free) # type: ignore
             
             sr, audio = next(audio_generator)
             print('generation finished!', flush=True)

@@ -14,7 +14,6 @@ from module.commons import init_weights, get_padding
 from module.mrte_model import MRTE
 from module.quantize import ResidualVectorQuantizer
 from text import symbols
-from torch.cuda.amp import autocast
 
 
 class StochasticDurationPredictor(nn.Module):
@@ -903,7 +902,7 @@ class SynthesizerTrn(nn.Module):
         )
         ge = self.ref_enc(y * y_mask, y_mask)
 
-        with autocast(enabled=False):
+        with torch.amp.autocast('cuda', enabled=False): # type: ignore
             ssl = self.ssl_proj(ssl)
             quantized, codes, commit_loss, quantized_list = self.quantizer(
                 ssl, layers=[0]

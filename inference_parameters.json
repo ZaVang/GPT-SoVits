@@ -1,15 +1,15 @@
 [
     {
-      "ref_wav_path": "dolly.wav",
-      "prompt_text": "要不是追随了你这么久，我肯定信了你这话。每次你说不想做，最后全都完美解决。",
+      "ref_wav_path": "kuidou_cn.wav",
+      "prompt_text": "超级空投就在我附近，有人要来抢抢看么？",
       "prompt_language": "zh",
       "text": "那时候我才意识到我已经迷路了。我想等到红灯时停下自行车看导航，谁知一路都是绿灯，由此一路往前，我冲着众人鞠躬，这便是我迟到十年的原因。",
       "text_language": "zh",
       "how_to_cut": null
     },
     {
-      "ref_wav_path": "dolly.wav",
-      "prompt_text": "要不是追随了你这么久，我肯定信了你这话。每次你说不想做，最后全都完美解决。",
+      "ref_wav_path": "kuidou_cn.wav",
+      "prompt_text": "超级空投就在我附近，有人要来抢抢看么？",
       "prompt_language": "zh",
       "text": "总的来说对于游戏思维的要求非常高。而且因为规则很多很复杂，所以也不会出现重复游玩带来的枯燥感，非常适合有事没事就拿出来想一想。有时候突然的灵光乍现就可以想到解决问题的办法。",
       "text_language": "zh",
