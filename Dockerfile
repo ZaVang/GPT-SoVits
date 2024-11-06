@@ -20,15 +20,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 下载CUDA工具包并安装
-RUN wget -q https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run \
-    && sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit > /dev/null \
-    && rm cuda_11.8.0_520.61.05_linux.run
+# # 下载CUDA工具包并安装
+# RUN wget -q https://developer.download.nvidia.com/compute/cuda/11.8.0/local_installers/cuda_11.8.0_520.61.05_linux.run \
+#     && sh cuda_11.8.0_520.61.05_linux.run --silent --toolkit > /dev/null \
+#     && rm cuda_11.8.0_520.61.05_linux.run
 
-# 更新环境变量
-ENV PATH=$PATH:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/nvidia/lib64
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
-ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
+# # 更新环境变量
+# ENV PATH=$PATH:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/nvidia/lib64
+# ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+# ENV LD_LIBRARY_PATH=/usr/local/nvidia/lib64:$LD_LIBRARY_PATH
 
 # 创建并初始化conda环境
 RUN conda create -n aispeech python=3.10.13 && \
@@ -39,9 +39,10 @@ SHELL ["conda", "run", "-n", "aispeech", "/bin/bash", "-c"]
 WORKDIR /app
 
 # 安装依赖
+
 COPY requirements.txt /app/requirements.txt
 RUN echo "10.65.3.241 download.pytorch.org">>/etc/hosts && \
-    pip install torch==2.0.0+cu118 torchvision==0.15.1+cu118 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118 && \
+    conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch && \
     pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
     pip install -r /app/requirements.txt
 
