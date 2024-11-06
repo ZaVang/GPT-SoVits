@@ -43,7 +43,6 @@ WORKDIR /app
 COPY requirements.txt /app/requirements.txt
 RUN echo "10.65.3.241 download.pytorch.org">>/etc/hosts && \
     conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch && \
-    pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/ && \
     pip install -r /app/requirements.txt
 
 # 将当前目录内容复制到容器的/app下
