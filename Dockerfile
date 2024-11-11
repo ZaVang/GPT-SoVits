@@ -41,7 +41,7 @@ WORKDIR /app
 # 安装依赖
 
 COPY install.sh /app/install.sh
-RUN bash install.sh
+RUN bash /app/install.sh
 
 # 将当前目录内容复制到容器的/app下
 COPY . /app
