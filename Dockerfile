@@ -40,9 +40,8 @@ WORKDIR /app
 
 # 安装依赖
 
-COPY requirements.txt /app/requirements.txt
-RUN conda install pytorch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -c pytorch && \
-    pip install -r /app/requirements.txt
+COPY install.sh /app/install.sh
+RUN bash install.sh
 
 # 将当前目录内容复制到容器的/app下
 COPY . /app
