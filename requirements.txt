@@ -30,4 +30,4 @@ einops
 pydantic
 wordsegment
 openpyxl
-pip install git+https://token:c6apWXMk43j9rGeW3D8S@gitlab.lilithgame.com/datascience/cgai/lilithopenai/agent-kernel.git
+git+https://token:c6apWXMk43j9rGeW3D8S@gitlab.lilithgame.com/datascience/cgai/lilithopenai/agent-kernel.git@80f238716feb1dbd90e35017be3a383956f7d8bd
