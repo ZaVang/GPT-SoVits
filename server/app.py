@@ -223,7 +223,7 @@ async def batch_predict(
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
 
 
-@app.post("/api/tts/check_lines")
+@router.post("/api/tts/check_lines")
 async def check_lines(file: UploadFile, background_tasks: BackgroundTasks):
     # 创建临时目录
     temp_dir = "temp"
