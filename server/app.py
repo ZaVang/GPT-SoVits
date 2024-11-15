@@ -1,9 +1,11 @@
 import os
+import shutil
 import sys
 from typing import Any, Optional
 import zipfile
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from fastapi import FastAPI, UploadFile, HTTPException, BackgroundTasks, APIRouter
+from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, APIRouter
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, model_validator
 import json
@@ -16,6 +18,7 @@ import gradio as gr
 import uvicorn
 import pandas as pd
 
+from server.asr import audio_line_check
 from server.webui import webui, LANG_DICT
 from server.modelhandler import ModelHandler
 from src.inference import TTSInference
@@ -55,7 +58,10 @@ class TTSModelRequest(BaseModel):
     
     
 async def remove_temp_file(path: str):
-    os.remove(path)
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    else:
+        os.remove(path)
 
 def setup_logging():
     #设置根日志记录器
@@ -215,7 +221,49 @@ async def batch_predict(
 
     except KeyError as e:
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
+
+
+@app.post("/api/tts/check_lines")
+async def check_lines(file: UploadFile, background_tasks: BackgroundTasks):
+    # 创建临时目录
+    temp_dir = "temp"
+    if not os.path.exists(temp_dir):
+        os.makedirs(temp_dir)
     
+    # 保存上传的zip文件
+    zip_path = os.path.join(temp_dir, file.filename) # type: ignore
+    with open(zip_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    # 解压zip文件
+    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+        for member in zip_ref.infolist():
+            # 处理文件名编码
+            member.filename = member.filename.encode('cp437').decode('utf-8')
+            zip_ref.extract(member, temp_dir)
+    
+    # 假设解压后的文件夹结构是固定的
+    base_name = os.path.splitext(os.path.basename(zip_path))[0]
+    base_folder = os.path.join(temp_dir, base_name)
+    
+    # 直接构建路径
+    excel_path = os.path.join(base_folder, "需求表.xlsx")
+    audio_folder = os.path.join(base_folder, "配音文件")
+    
+    if not excel_path or not audio_folder:
+        return {"error": "需求表.xlsx或配音文件夹未找到"}
+    
+    # 执行audio_line_check函数
+    await audio_line_check(excel_path, audio_folder)
+    
+    # 获取审查结果文件路径
+    result_excel_path = excel_path.replace("需求表.xlsx", "审查结果.xlsx")
+    
+    # 在后台删除临时目录
+    background_tasks.add_task(remove_temp_file, temp_dir)
+
+    # 返回审查结果文件
+    return FileResponse(result_excel_path, filename="审查结果.xlsx")
 
 # 挂载 Gradio 接口到 FastAPI 应用
 ui = webui()
