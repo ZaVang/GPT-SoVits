@@ -105,7 +105,7 @@ async def process_audio(resource_name, line, audio_folder):
 
 async def audio_line_check(excel_path, audio_folder):
     # 读取Excel文件
-    df = pd.read_excel(excel_path, header=1)
+    df = pd.read_excel(excel_path, header=0)
     
     # 获取台词和资源命名
     lines = df.iloc[:, 0]
