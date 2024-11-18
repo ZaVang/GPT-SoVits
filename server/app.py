@@ -5,6 +5,7 @@ from typing import Any, Optional
 import zipfile
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+import chardet
 from fastapi import FastAPI, File, UploadFile, HTTPException, BackgroundTasks, APIRouter
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, model_validator
@@ -238,8 +239,10 @@ async def check_lines(file: UploadFile, background_tasks: BackgroundTasks):
     # 解压zip文件
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
         for member in zip_ref.infolist():
-            # 处理文件名编码
-            member.filename = member.filename.encode('cp437').decode('utf-8')
+            encoding = chardet.detect(member.filename.encode('cp437'))['encoding']
+            if encoding is None:
+                encoding = 'utf-8'  # 默认使用utf-8
+            member.filename = member.filename.encode('cp437').decode(encoding)
             zip_ref.extract(member, temp_dir)
     
     # 假设解压后的文件夹结构是固定的
