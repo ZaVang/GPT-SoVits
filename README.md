@@ -4,6 +4,18 @@
 
 This project is a fork of the original [GPT-SoVITS](https://github.com/RVC-Boss/GPT-SoVITS) project, with several adjustments and enhancements aimed at improving clarity, functionality, and ease of use.
 
+
+# Update Log
+
+## New Features
+
+- **Batch Inference API**: You can now upload an Excel file for batch inference. The Excel file should contain two columns in the following format:
+
+  - The first column: text content, the second column: filename, with the first row as the header.
+  - This feature will convert the text into audio and save it in the corresponding `filenames.wav` file.
+- **Automatic Reference Audio Selection**: Simply input the character's name, and the system will automatically select the model reference audio and language.
+
+
 ## Features
 
 - **Refined Structure**: Adjustments have been made to the project's structure for enhanced clarity.

@@ -90,10 +90,10 @@ async def exception_handler(request, exc):
 
 @router.post("/api/tts/inference")
 async def predict(
-                #   audio_file: UploadFile, 
-                  data: TTSModelRequest, 
-                  background_tasks: BackgroundTasks
-                  ):
+    #   audio_file: UploadFile, 
+    data: TTSModelRequest, 
+    background_tasks: BackgroundTasks
+):
     try:
         if data.character_name is not None:
             data.ref_audio_path = example_json[data.character_name]['audio_path']
