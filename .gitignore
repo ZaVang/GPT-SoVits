@@ -23,4 +23,5 @@ Makefile
 onnx/
 data/
 !data/check_audio.py
+example.xlsx
 
