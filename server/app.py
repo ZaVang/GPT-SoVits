@@ -224,49 +224,49 @@ async def batch_predict(
         return {"error": f"Missing necessary parameter: {e.args[0]}"}, 400
 
 
-@router.post("/api/tts/check_lines")
-async def check_lines(file: UploadFile, background_tasks: BackgroundTasks):
-    # 创建临时目录
-    temp_dir = "temp"
-    if not os.path.exists(temp_dir):
-        os.makedirs(temp_dir)
+# @router.post("/api/tts/check_lines")
+# async def check_lines(file: UploadFile, background_tasks: BackgroundTasks):
+#     # 创建临时目录
+#     temp_dir = "temp"
+#     if not os.path.exists(temp_dir):
+#         os.makedirs(temp_dir)
     
-    # 保存上传的zip文件
-    zip_path = os.path.join(temp_dir, file.filename) # type: ignore
-    with open(zip_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
+#     # 保存上传的zip文件
+#     zip_path = os.path.join(temp_dir, file.filename) # type: ignore
+#     with open(zip_path, "wb") as buffer:
+#         shutil.copyfileobj(file.file, buffer)
     
-    # 解压zip文件
-    with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-        for member in zip_ref.infolist():
-            encoding = chardet.detect(member.filename.encode('cp437'))['encoding']
-            if encoding is None:
-                encoding = 'utf-8'  # 默认使用utf-8
-            member.filename = member.filename.encode('cp437').decode(encoding)
-            zip_ref.extract(member, temp_dir)
+#     # 解压zip文件
+#     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+#         for member in zip_ref.infolist():
+#             encoding = chardet.detect(member.filename.encode('cp437'))['encoding']
+#             if encoding is None:
+#                 encoding = 'utf-8'  # 默认使用utf-8
+#             member.filename = member.filename.encode('cp437').decode(encoding)
+#             zip_ref.extract(member, temp_dir)
     
-    # 假设解压后的文件夹结构是固定的
-    base_name = os.path.splitext(os.path.basename(zip_path))[0]
-    base_folder = os.path.join(temp_dir, base_name)
+#     # 假设解压后的文件夹结构是固定的
+#     base_name = os.path.splitext(os.path.basename(zip_path))[0]
+#     base_folder = os.path.join(temp_dir, base_name)
     
-    # 直接构建路径
-    excel_path = os.path.join(base_folder, "需求表.xlsx")
-    audio_folder = os.path.join(base_folder, "配音文件")
+#     # 直接构建路径
+#     excel_path = os.path.join(base_folder, "需求表.xlsx")
+#     audio_folder = os.path.join(base_folder, "配音文件")
     
-    if not excel_path or not audio_folder:
-        return {"error": "需求表.xlsx或配音文件夹未找到"}
+#     if not excel_path or not audio_folder:
+#         return {"error": "需求表.xlsx或配音文件夹未找到"}
     
-    # 执行audio_line_check函数
-    await audio_line_check(excel_path, audio_folder)
+#     # 执行audio_line_check函数
+#     await audio_line_check(excel_path, audio_folder)
     
-    # 获取审查结果文件路径
-    result_excel_path = excel_path.replace("需求表.xlsx", "审查结果.xlsx")
+#     # 获取审查结果文件路径
+#     result_excel_path = excel_path.replace("需求表.xlsx", "审查结果.xlsx")
     
-    # 在后台删除临时目录
-    background_tasks.add_task(remove_temp_file, temp_dir)
+#     # 在后台删除临时目录
+#     background_tasks.add_task(remove_temp_file, temp_dir)
 
-    # 返回审查结果文件
-    return FileResponse(result_excel_path, filename="审查结果.xlsx")
+#     # 返回审查结果文件
+#     return FileResponse(result_excel_path, filename="审查结果.xlsx")
 
 # 挂载 Gradio 接口到 FastAPI 应用
 ui = webui()
